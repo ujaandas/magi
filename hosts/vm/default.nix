@@ -5,10 +5,27 @@
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+
+  ];
+
+  nix = {
+    enable = true;
+
+    gc = {
+      automatic = true;
+      options = "--delete-older-than 30d";
+    };
+
+    settings = {
+      experimental-features = "nix-command flakes";
+      warn-dirty = false;
+    };
+
+    channel.enable = false;
+  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -52,8 +69,12 @@
   users.users.homelab = {
     isNormalUser = true;
     description = "homelab";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
+    packages = with pkgs; [ ];
+    shell = pkgs.zsh;
   };
 
   # Allow unfree packages
@@ -65,6 +86,12 @@
     neovim
     git
   ];
+
+  programs = {
+    zsh.enable = true;
+    direnv.enable = true;
+    nix-ld.enable = true;
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

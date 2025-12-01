@@ -6,21 +6,54 @@
     hardware.url = "github:nixos/nixos-hardware/master";
   };
 
-  outputs = 
+  outputs =
     inputs@{
       self,
       nixpkgs,
-      hardware
+      hardware,
     }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+      mkScript =
+        name: text:
+        pkgs.writeShellApplication {
+          inherit name text;
+          runtimeInputs = with pkgs; [
+            nixfmt-tree
+            statix
+          ];
+        };
+    in
     {
-      nixosConfigurations = {
-        vm = nixpkgs.lib.nixosSystem {
-	  specialArgs = { inherit self inputs; };
-	  system = "x86_64-linux";
-	  modules = [
-	    ./hosts/vm
-	  ];
-	};
+      nixosConfigurations.vm = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit self inputs; };
+        inherit system;
+        modules = [ ./hosts/vm ];
+      };
+
+      devShells.${system}.default = pkgs.mkShell {
+        buildInputs = [
+          self.packages.${system}.build
+          self.packages.${system}.activate
+          self.packages.${system}.format
+          self.packages.${system}.lint
+          self.packages.${system}.check
+          self.packages.${system}.test-all
+          self.packages.${system}.rebuild
+        ];
+      };
+
+      packages.${system} = {
+        build = mkScript "build" ''sudo nixos-rebuild build --flake .#vm'';
+        activate = mkScript "activate" ''
+          if [[ -e result/activate ]]; then sudo result/activate; fi
+        '';
+        format = mkScript "format" ''treefmt --walk git'';
+        lint = mkScript "lint" ''statix check --ignore result .direnv'';
+        check = mkScript "check" ''nix flake check'';
+        test-all = mkScript "test-all" ''check && format && lint && build'';
+        rebuild = mkScript "rebuild" ''test-all && activate'';
       };
     };
 }

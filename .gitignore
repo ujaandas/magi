@@ -1,0 +1,30 @@
+# macos system files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# build
+/result
+/result-*
+
+# nix
+.direnv
+/.nix-gcroots
+/nix-support
+/nix-store
+
+
+# editor and ide
+*.swp
+*.swo
+*.bak
+*.tmp
+*.log
+.vscode/
+
+# misc
+*.env
+*.local
+*.secret
