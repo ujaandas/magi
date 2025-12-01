@@ -1,5 +1,5 @@
 { db, ... }:
-let 
+let
   vmdir = "/home/homelab/homelab/vms";
 in
 {

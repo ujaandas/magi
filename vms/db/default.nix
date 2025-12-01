@@ -18,7 +18,7 @@
 
     authentication = lib.mkOverride 10 ''
       local all all trust
-      host pocketid pocketid 192.168.100.0/24 scram-sha-256
+      host pocketid pocketid 192.168.100.0/24 trust
     '';
   };
 

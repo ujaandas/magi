@@ -9,6 +9,7 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./vms.nix
+    ../../modules/networking/pocket-id.nix
   ];
 
   # dont forget to run Set-VMProcessor -VMName "homelab" -ExposeVirtualizationExtensions $true
