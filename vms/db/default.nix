@@ -1,7 +1,28 @@
+{ lib, pkgs, ... }:
 {
   imports = [
     ./microvm-configuration.nix
   ];
+
+  services.postgresql = {
+    enable = true;
+    package = pkgs.postgresql_15;
+    ensureDatabases = [ "pocketid" ];
+    ensureUsers = [
+      {
+        name = "pocketid";
+        ensureDBOwnership = true;
+      }
+    ];
+    settings.listen_addresses = lib.mkForce "*";
+
+    authentication = lib.mkOverride 10 ''
+      # Allow local connections
+      local   all         all                     trust
+      # Allow LAN subnet connections
+      host    pocketid    pocketid   192.168.100.0/24   scram-sha-256
+    '';
+  };
 
   networking = {
     hostName = "db";

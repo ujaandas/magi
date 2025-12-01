@@ -7,7 +7,10 @@
       # "proxy"
     ];
     vms = {
-      db.flake = db;
+      db = {
+        flake = db;
+        # updateFlake = "file://${toString ../../vms/db}";
+      };
     };
   };
 }

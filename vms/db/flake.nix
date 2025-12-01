@@ -23,7 +23,6 @@
           microvm.nixosModules.microvm
           ./default.nix
         ];
-        specialArgs = { inherit self nixpkgs microvm; };
       };
     };
 }
