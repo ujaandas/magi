@@ -4,6 +4,27 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     hardware.url = "github:nixos/nixos-hardware/master";
+    agenix.url = "github:ryantm/agenix";
+    microvm.url = "github:astro/microvm.nix";
+
+    # microvms
+    db = {
+      url = "path:./vms/db";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.microvm.follows = "microvm";
+    };
+
+    # auth = {
+    #   url = "path:./vms/auth";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    #   inputs.microvm.follows = "microvm";
+    # };
+
+    # proxy = {
+    #   url = "path:./vms/proxy";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    #   inputs.microvm.follows = "microvm";
+    # };
   };
 
   outputs =
@@ -11,8 +32,12 @@
       self,
       nixpkgs,
       hardware,
+      agenix,
+      microvm,
+      db,
     }:
     let
+      username = "homelab";
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
       mkScript =
@@ -27,9 +52,16 @@
     in
     {
       nixosConfigurations.vm = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit self inputs; };
+        specialArgs = inputs // {
+          inherit username;
+          inherit system;
+        };
         inherit system;
-        modules = [ ./hosts/vm ];
+        modules = [
+          agenix.nixosModules.default
+          microvm.nixosModules.host
+          ./hosts/vm
+        ];
       };
 
       devShells.${system}.default = pkgs.mkShell {
@@ -45,9 +77,11 @@
       };
 
       packages.${system} = {
-        build = mkScript "build" ''sudo nixos-rebuild build --flake .#vm'';
+        build = mkScript "build" ''sudo nixos-rebuild build --flake .\#vm'';
         activate = mkScript "activate" ''
-          if [[ -e result/activate ]]; then sudo result/activate; fi
+          if [[ -e result/bin/switch-to-configuration ]]; then
+            sudo result/bin/switch-to-configuration switch
+          fi
         '';
         format = mkScript "format" ''treefmt --walk git'';
         lint = mkScript "lint" ''statix check --ignore result .direnv'';
