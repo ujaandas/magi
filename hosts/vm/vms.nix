@@ -1,4 +1,7 @@
 { db, ... }:
+let 
+  vmdir = "/home/homelab/homelab/vms";
+in
 {
   microvm = {
     autostart = [
@@ -9,7 +12,7 @@
     vms = {
       db = {
         flake = db;
-        # updateFlake = "file://${toString ../../vms/db}";
+        updateFlake = "path:${vmdir}/db";
       };
     };
   };

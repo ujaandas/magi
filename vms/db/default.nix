@@ -17,10 +17,8 @@
     settings.listen_addresses = lib.mkForce "*";
 
     authentication = lib.mkOverride 10 ''
-      # Allow local connections
-      local   all         all                     trust
-      # Allow LAN subnet connections
-      host    pocketid    pocketid   192.168.100.0/24   scram-sha-256
+      local all all trust
+      host pocketid pocketid 192.168.100.0/24 scram-sha-256
     '';
   };
 
