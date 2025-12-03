@@ -4,21 +4,12 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     hardware.url = "github:nixos/nixos-hardware/master";
-    agenix.url = "github:ryantm/agenix";
     microvm.url = "github:astro/microvm.nix";
+    agenix.url = "github:ryantm/agenix";
 
     # microvms
-    db = {
-      url = "path:./vms/db";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.microvm.follows = "microvm";
-    };
-
-    # auth = {
-    #   url = "path:./vms/auth";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    #   inputs.microvm.follows = "microvm";
-    # };
+    db.url = "path:./vms/db";
+    auth.url = "path:./vms/auth";
 
     # proxy = {
     #   url = "path:./vms/proxy";
@@ -32,9 +23,10 @@
       self,
       nixpkgs,
       hardware,
-      agenix,
       microvm,
+      agenix,
       db,
+      auth,
     }:
     let
       username = "homelab";

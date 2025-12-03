@@ -52,6 +52,22 @@
     extraGroups = [ "wheel" ];
   };
 
+  nix = {
+    enable = true;
+
+    gc = {
+      automatic = true;
+      options = "--delete-older-than 30d";
+    };
+
+    settings = {
+      experimental-features = "nix-command flakes";
+      warn-dirty = false;
+    };
+
+    channel.enable = false;
+  };
+
   services.openssh.enable = true;
 
   system.stateVersion = "24.11";

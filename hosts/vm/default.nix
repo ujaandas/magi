@@ -9,7 +9,6 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./vms.nix
-    ../../modules/networking/pocket-id.nix
   ];
 
   # dont forget to run Set-VMProcessor -VMName "homelab" -ExposeVirtualizationExtensions $true
@@ -38,7 +37,10 @@
     hostName = "homelab";
     useNetworkd = true;
 
-    bridges.br0.interfaces = [ "db" ];
+    bridges.br0.interfaces = [
+      "db"
+      "auth"
+    ];
 
     interfaces.br0.ipv4.addresses = [
       {
