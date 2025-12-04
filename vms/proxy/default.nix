@@ -9,40 +9,11 @@
     ./microvm-configuration.nix
   ];
 
-  services.pocket-id = {
-    enable = true;
-    settings = {
-      APP_URL = "http://192.168.100.3:3000";
-      HOST = "192.168.100.3";
-      PORT = 3000;
-      TRUST_PROXY = false;
-      ANALYTICS_DISABLED = true;
-      DB_PROVIDER = "postgres";
-      DB_CONNECTION_STRING = "postgresql://pocketid@192.168.100.2:5432/pocketid";
-      KEYS_STORAGE = "database";
-      # ENCRYPTION_KEY_FILE = "%d/POCKETID";
-    };
-  };
-
-  systemd = {
-    services.pocket-id = {
-      serviceConfig = {
-        LoadCredential = [ "POCKETID" ];
-        Environment = [ ''ENCRYPTION_KEY_FILE=%d/POCKETID'' ];
-        ExecStartPre = ''${pkgs.bash}/bin/bash -c 'cat "$CREDENTIALS_DIRECTORY/POCKETID"' '';
-      };
-    };
-
-    tmpfiles.rules = [
-      "d /var/lib/pocket-id 0755 pocket-id pocket-id -"
-    ];
-  };
-
   networking = {
-    hostName = "auth";
+    hostName = "proxy";
     useNetworkd = true;
     firewall.allowedTCPPorts = [
-      22 3000
+      22
     ];
   };
 
@@ -51,7 +22,7 @@
     networks."20-lan" = {
       matchConfig.Type = "ether";
       networkConfig = {
-        Address = [ "192.168.100.3/24" ];
+        Address = [ "192.168.100.4/24" ];
         Gateway = "192.168.100.1";
         DNS = [
           "192.168.100.1"

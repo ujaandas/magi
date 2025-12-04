@@ -40,6 +40,7 @@
     bridges.br0.interfaces = [
       "db"
       "auth"
+      "proxy"
     ];
 
     interfaces.br0.ipv4.addresses = [
