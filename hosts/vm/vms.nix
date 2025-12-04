@@ -1,4 +1,9 @@
-{ db, auth, ... }:
+{
+  db,
+  auth,
+  proxy,
+  ...
+}:
 let
   vmdir = "/home/homelab/homelab/vms";
 in
@@ -14,7 +19,7 @@ in
     autostart = [
       "db"
       "auth"
-      # "proxy"
+      "proxy"
     ];
     vms = {
       db = {
@@ -25,6 +30,11 @@ in
       auth = {
         flake = auth;
         updateFlake = "path:${vmdir}/auth";
+        restartIfChanged = true;
+      };
+      proxy = {
+        flake = proxy;
+        updateFlake = "path:${vmdir}/proxy";
         restartIfChanged = true;
       };
     };

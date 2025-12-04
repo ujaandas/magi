@@ -42,7 +42,8 @@
     hostName = "auth";
     useNetworkd = true;
     firewall.allowedTCPPorts = [
-      22 3000
+      22
+      3000
     ];
   };
 

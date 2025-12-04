@@ -10,12 +10,8 @@
     # microvms
     db.url = "path:./vms/db";
     auth.url = "path:./vms/auth";
+    proxy.url = "path:./vms/proxy";
 
-    # proxy = {
-    #   url = "path:./vms/proxy";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    #   inputs.microvm.follows = "microvm";
-    # };
   };
 
   outputs =
@@ -27,6 +23,7 @@
       agenix,
       db,
       auth,
+      proxy,
     }:
     let
       username = "homelab";

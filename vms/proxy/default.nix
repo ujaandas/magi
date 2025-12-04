@@ -4,16 +4,51 @@
   pkgs,
   ...
 }:
+let
+  domain = "ujaan.me";
+in
 {
   imports = [
     ./microvm-configuration.nix
   ];
+
+  services = {
+    openssh.enable = true;
+
+    caddy = {
+      enable = true;
+      email = "ujaandas03@gmail.com";
+      extraConfig = ''
+        {
+          admin off
+        }
+
+        pocketid.${domain} {
+          reverse_proxy 192.168.100.3:3000
+        }
+      '';
+    };
+
+    dnsmasq = {
+      enable = true;
+      settings = {
+        listen-address = "192.168.100.4";
+        bind-interfaces = true;
+        server = [ "1.1.1.1" ];
+        address = [
+          "/pocketid.${domain}/192.168.100.4"
+        ];
+      };
+    };
+  };
 
   networking = {
     hostName = "proxy";
     useNetworkd = true;
     firewall.allowedTCPPorts = [
       22
+      80
+      443
     ];
   };
 
@@ -51,8 +86,6 @@
     };
     channel.enable = false;
   };
-
-  services.openssh.enable = true;
 
   system.stateVersion = "24.11";
 }

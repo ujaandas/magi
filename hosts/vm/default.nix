@@ -49,6 +49,17 @@
         prefixLength = 24;
       }
     ];
+
+    nat = {
+      enable = true;
+      internalInterfaces = [ "br0" ];
+      externalInterface = "eth0";
+    };
+
+    firewall = {
+      enable = true;
+      allowedTCPPorts = [ 22 ];
+    };
   };
 
   # networking.hostName = "homelab"; # Define your hostname.
