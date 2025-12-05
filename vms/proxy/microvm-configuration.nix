@@ -27,5 +27,9 @@
         mac = "02:00:00:00:00:03";
       }
     ];
+
+    credentialFiles = {
+      CLOUDFLARE = "/run/agenix/cloudflare";
+    };
   };
 }

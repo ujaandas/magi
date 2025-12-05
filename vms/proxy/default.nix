@@ -17,16 +17,22 @@ in
 
     caddy = {
       enable = true;
+      package = pkgs.caddy.withPlugins {
+        plugins = [ "github.com/caddy-dns/cloudflare@v0.2.2" ];
+        hash = "sha256-ea8PC/+SlPRdEVVF/I3c1CBprlVp1nrumKM5cMwJJ3U=";
+      };
       email = "ujaandas03@gmail.com";
-      extraConfig = ''
-        {
-          admin off
-        }
-
-        pocketid.${domain} {
-          reverse_proxy 192.168.100.3:3000
-        }
+      globalConfig = ''
+        admin off
       '';
+      virtualHosts = {
+        "pocketid.${domain}".extraConfig = ''
+          reverse_proxy 192.168.100.3:3000
+          tls {
+            dns cloudflare {file.{$CLOUDFLARE_API_KEY}}
+          }
+        '';
+      };
     };
 
     dnsmasq = {
@@ -38,6 +44,16 @@ in
         address = [
           "/pocketid.${domain}/192.168.100.4"
         ];
+      };
+    };
+  };
+
+  systemd = {
+    services.caddy = {
+      serviceConfig = {
+        LoadCredential = [ "CLOUDFLARE" ];
+        Environment = [ ''CLOUDFLARE_API_KEY=%d/CLOUDFLARE'' ];
+        ExecStartPre = ''${pkgs.bash}/bin/bash -c 'cat "$CREDENTIALS_DIRECTORY/CLOUDFLARE"' '';
       };
     };
   };
