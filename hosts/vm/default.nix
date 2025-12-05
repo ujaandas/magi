@@ -60,6 +60,8 @@
       enable = true;
       allowedTCPPorts = [ 22 ];
     };
+
+    nameservers = [ "192.168.100.4" ];
   };
 
   # networking.hostName = "homelab"; # Define your hostname.

@@ -61,11 +61,15 @@ in
   networking = {
     hostName = "proxy";
     useNetworkd = true;
-    firewall.allowedTCPPorts = [
-      22
-      80
-      443
-    ];
+    firewall = {
+      allowedTCPPorts = [
+        22
+        80
+        53
+        443
+      ];
+      allowedUDPPorts = [ 53 ];
+    };
   };
 
   systemd.network = {
